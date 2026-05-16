@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Agro Bozor — Oripov Ozodbek</title>
+    <meta name="description" content="Toshkent savdo markazlari — 3D interaktiv xarita" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+</head>
+<body>
+
+    <canvas class="canvas js-canvas"></canvas>
+
+    <!-- ═══════════════════════════════════
+         AUTH MODAL
+    ═══════════════════════════════════ -->
+    <div class="auth-screen js-auth-screen">
+        <div class="auth-screen__bg"></div>
+        <div class="auth-card">
+            <div class="auth-card__logo">🌾</div>
+            <h1 class="auth-card__brand">Agro Bozor</h1>
+            <p class="auth-card__sub">Oripov Ozodbek — 3D Savdo Platformasi</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab is-active js-tab" data-tab="login">Kirish</button>
+                <button class="auth-tab js-tab" data-tab="register">Ro'yxatdan o'tish</button>
+            </div>
+
+            <form class="auth-form js-login-form" novalidate>
+                <div class="auth-field">
+                    <label class="auth-label">Telefon yoki Login</label>
+                    <input class="auth-input js-login-username" type="text" placeholder="+998 90 123 45 67" autocomplete="username" required />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Parol</label>
+                    <div class="auth-input-wrap">
+                        <input class="auth-input js-login-password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+                        <button type="button" class="auth-eye js-eye">👁</button>
+                    </div>
+                </div>
+                <p class="auth-error js-login-error"></p>
+                <button type="submit" class="auth-btn">Kirish</button>
+                <div class="auth-demo">
+                    <p class="auth-demo__title">Tez kirish:</p>
+                    <button type="button" class="auth-demo__btn js-demo" data-user="mijoz">👤 Mijoz</button>
+                    <button type="button" class="auth-demo__btn js-demo" data-user="sotuvchi">🏪 Sotuvchi</button>
+                </div>
+            </form>
+
+            <form class="auth-form js-register-form" style="display:none" novalidate>
+                <div class="auth-field">
+                    <label class="auth-label">To'liq ism</label>
+                    <input class="auth-input js-reg-name" type="text" placeholder="Abdullayev Jasur" required />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Telefon</label>
+                    <input class="auth-input js-reg-phone" type="tel" placeholder="+998 90 123 45 67" required />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Parol</label>
+                    <input class="auth-input js-reg-password" type="password" placeholder="Kamida 6 ta belgi" required />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Rol</label>
+                    <div class="auth-roles">
+                        <label class="auth-role">
+                            <input type="radio" name="role" value="mijoz" checked class="js-role-input" />
+                            <span class="auth-role__icon">👤</span>
+                            <span class="auth-role__name">Mijoz</span>
+                            <span class="auth-role__desc">Xarid qilish</span>
+                        </label>
+                        <label class="auth-role">
+                            <input type="radio" name="role" value="sotuvchi" class="js-role-input" />
+                            <span class="auth-role__icon">🏪</span>
+                            <span class="auth-role__name">Sotuvchi</span>
+                            <span class="auth-role__desc">Do'kon boshqarish</span>
+                        </label>
+                    </div>
+                </div>
+                <p class="auth-error js-reg-error"></p>
+                <button type="submit" class="auth-btn">Ro'yxatdan o'tish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         GPS NAVIGATOR UI
+    ═══════════════════════════════════ -->
+    <div class="gps-navigator js-gps-navigator">
+        <h3 class="gps-title">🧭 Navigator</h3>
+        <select class="gps-select js-gps-select">
+            <option value="">Manzilni tanlang...</option>
+            <option value="chorsu">🕌 Chorsu Bozor (80m G'arb)</option>
+            <option value="korzinka">🛒 Korzinka (60m Shimol)</option>
+            <option value="erkin">🏬 Erkin Savdo (60m Janub)</option>
+            <option value="indenim">🏢 Indenim (70m Sharq)</option>
+            <option value="agro">🌾 Agro Bravo (140m Sharq)</option>
+        </select>
+        <div class="gps-distance js-gps-distance">Masofa: 0 m</div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         MINIMAP UI
+    ═══════════════════════════════════ -->
+    <div class="minimap-container">
+        <canvas id="minimap-canvas" width="140" height="140"></canvas>
+        <div class="minimap-label">MINIMAP</div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         TOP BAR
+    ═══════════════════════════════════ -->
+    <div class="topbar js-topbar" style="display:none">
+        <div class="topbar__left">
+            <span class="topbar__logo">🌾</span>
+            <span class="topbar__brand">Agro Bozor</span>
+        </div>
+        <div class="topbar__right">
+            <span class="topbar__user js-topbar-user"></span>
+            <div class="cart-badge js-cart-badge" style="display:none">
+                🛒 <span class="cart-badge__count js-cart-badge-count">0</span>
+            </div>
+            <button class="topbar__btn js-seller-btn" style="display:none">🏪 Boshqaruv</button>
+            <button class="topbar__btn topbar__btn--logout js-logout-btn">Chiqish</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         SOTUVCHI PANELI
+    ═══════════════════════════════════ -->
+    <div class="seller-panel js-seller-panel" style="display:none" role="dialog">
+        <div class="seller-panel__backdrop js-seller-backdrop"></div>
+        <div class="seller-panel__body">
+            <div class="seller-panel__head">
+                <h2 class="seller-panel__title">🏪 Sotuvchi Paneli</h2>
+                <button class="seller-panel__close js-seller-close">✕</button>
+            </div>
+            <div class="seller-stats">
+                <div class="seller-stat"><span class="seller-stat__val js-stat-orders">0</span><span class="seller-stat__lbl">Buyurtmalar</span></div>
+                <div class="seller-stat"><span class="seller-stat__val js-stat-revenue">0</span><span class="seller-stat__lbl">Daromad</span></div>
+                <div class="seller-stat"><span class="seller-stat__val js-stat-products">0</span><span class="seller-stat__lbl">Mahsulotlar</span></div>
+            </div>
+            <div class="seller-tabs">
+                <button class="seller-tab is-active js-seller-tab" data-tab="products">Mahsulotlar</button>
+                <button class="seller-tab js-seller-tab" data-tab="orders">Buyurtmalar</button>
+            </div>
+            <div class="seller-content js-seller-content" data-content="products">
+                <button class="seller-add-btn js-add-product-btn">+ Yangi mahsulot</button>
+                <form class="seller-product-form js-product-form" style="display:none" novalidate>
+                    <div class="spf-grid">
+                        <div class="auth-field"><label class="auth-label">Nom</label><input class="auth-input js-pf-name" type="text" placeholder="Pomidor" required /></div>
+                        <div class="auth-field"><label class="auth-label">Emoji</label><input class="auth-input js-pf-emoji" type="text" placeholder="🍅" maxlength="2" required /></div>
+                        <div class="auth-field"><label class="auth-label">Narx (so'm)</label><input class="auth-input js-pf-price" type="number" placeholder="8000" min="0" required /></div>
+                        <div class="auth-field"><label class="auth-label">Birlik</label><select class="auth-input js-pf-unit"><option value="kg">kg</option><option value="dona">dona</option><option value="litr">litr</option><option value="qop">qop</option></select></div>
+                        <div class="auth-field"><label class="auth-label">Zaxira</label><input class="auth-input js-pf-stock" type="number" placeholder="100" min="0" required /></div>
+                        <div class="auth-field"><label class="auth-label">Tavsif</label><input class="auth-input js-pf-desc" type="text" placeholder="Yangi, sifatli" /></div>
+                    </div>
+                    <div class="spf-actions">
+                        <button type="submit" class="auth-btn" style="width:auto;padding:10px 28px">Saqlash</button>
+                        <button type="button" class="auth-btn auth-btn--outline js-pf-cancel">Bekor</button>
+                    </div>
+                </form>
+                <div class="seller-products-list js-seller-products-list"></div>
+            </div>
+            <div class="seller-content js-seller-content" data-content="orders" style="display:none">
+                <div class="seller-orders-list js-seller-orders-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         SHOP OVERLAY
+    ═══════════════════════════════════ -->
+    <div class="shop-overlay js-shop-overlay" aria-modal="true" role="dialog">
+        <div class="shop-overlay__backdrop js-shop-backdrop"></div>
+        <div class="shop-overlay__panel">
+            <div class="shop-overlay__header js-shop-header">
+                <div class="shop-overlay__title-wrap">
+                    <span class="shop-overlay__emoji js-shop-emoji"></span>
+                    <h2 class="shop-overlay__title js-shop-title"></h2>
+                </div>
+                <button class="shop-overlay__close js-shop-close">✕</button>
+            </div>
+            <div class="shop-overlay__products js-shop-products"></div>
+            <div class="shop-overlay__cart js-shop-cart">
+                <div class="cart__header">
+                    <span class="cart__icon">🛒</span>
+                    <h3 class="cart__title">Savat</h3>
+                    <span class="cart__count js-cart-count">0 ta mahsulot</span>
+                </div>
+                <div class="cart__items js-cart-items"></div>
+                <div class="cart__footer">
+                    <div class="cart__total">Jami: <strong class="js-cart-total">0</strong> so'm</div>
+                    <button class="cart__order-btn js-order-btn">Buyurtma berish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast js-toast" role="alert" aria-live="polite"></div>
+
+    <!-- Xush kelibsiz -->
+    <div class="welcome js-welcome">
+        <div class="welcome__card">
+            <div class="welcome__emoji js-welcome-emoji">🌾</div>
+            <h2 class="welcome__title">Xush kelibsiz!</h2>
+            <p class="welcome__name js-welcome-name"></p>
+            <p class="welcome__sub js-welcome-sub"></p>
+        </div>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+</body>
+</html>
+
+<!-- PARK PROMPT -->
+<div class="park-prompt js-park-prompt" style="display:none; position:fixed; bottom: 20%; left:50%; transform:translateX(-50%); background: #ffd700; color:#000; padding:15px 30px; border-radius:30px; font-weight:bold; font-size:20px; z-index:999; box-shadow: 0 0 20px #ffd700; transition: 0.3s;">Do'konga kirish uchun <strong>ENTER</strong> bosing!</div>
